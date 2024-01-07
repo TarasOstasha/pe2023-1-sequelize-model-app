@@ -1,5 +1,8 @@
-'use strict';
+
+const { GENDERS } = require('../constants');
 /** @type {import('sequelize-cli').Migration} */
+
+// unique, allowNull, 
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('users', {
@@ -10,22 +13,27 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       first_name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       last_name: {
         type: Sequelize.STRING
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false
       },
       passw_hash: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       birthday: {
         type: Sequelize.DATEONLY
       },
+      // male, female, other
       gender: {
-        type: Sequelize.STRING
+        type: Sequelize.ENUM(...GENDERS)
       },
       image: {
         type: Sequelize.STRING
