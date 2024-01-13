@@ -91,7 +91,33 @@ module.exports.updateUserById = async (req, res, next) => {
         next(err);
     }
 };
-
+// -------------------------------------------------------------------------------------
+module.exports.updateOrCreateUser = async (req, res, next) => {
+    // check if exist
+    // if exist - update data
+    // else , create user
+    const { body, params: { id } }  = req;
+    try {
+        const [updatedUsersCount, [updatedUser]] = await User.update(body, {
+            where: { id },
+            raw: true,
+            returning: true
+        });
+        if(!updatedUsersCount) {
+            // if not found - create a new one
+            body.id = id;
+            return next();
+        }
+        const preparedUser = _.omit(updatedUser, [
+            'passwHash',
+            'createdAt',
+            'updatedAt',
+        ]);
+        res.status(200).send({ data: preparedUser });
+    } catch (error) {
+        next(error);
+    }
+};
 /// -------------------------------------------------------------------------------------
 module.exports.deleteUserById = async (req, res, next) => {
     const { id } = req.params;

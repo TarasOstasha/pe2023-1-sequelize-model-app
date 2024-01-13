@@ -68,3 +68,33 @@ Content-Type: application/json
 {
     "firstName": "545153153"
 }
+
+// --------------------------------------------------------
+### update or create
+### update - 200 {}
+
+PUT  http://localhost:5000/api/users/121
+Content-Type: application/json
+
+{
+    "firstName": "Janert",
+    "lastName": "Dosm",
+    "email": "m121@m.com",
+    "passwHash": "987",
+    "birthday": "1990-11-10",
+    "gender": "female"
+}
+
+### create - 201 {}
+
+PUT  http://localhost:5000/api/users/120
+Content-Type: application/json
+
+{
+    "firstName": "Janertupdated",
+    "lastName": "Dosm",
+    "email": "m120@m.com",
+    "passwHash": "987",
+    "birthday": "1990-11-10",
+    "gender": "female"
+}

@@ -12,6 +12,7 @@ usersRouter.route('/')
 usersRouter.route('/:id')
     .get(usresController.getUserById)
     .patch(usresController.updateUserById)
+    .put(usresController.updateOrCreateUser, usresController.createUser)
     .delete(usresController.deleteUserById)
 
 module.exports = usersRouter;
