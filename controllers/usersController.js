@@ -1,17 +1,17 @@
-const { hashSync } = require('bcrypt');
+// const { hashSync } = require('bcrypt');
 const _ = require('lodash');
 const { User } = require('../models');
 
 
 // const pass = '123';
-const HASH_SALT = 10
+// const HASH_SALT = 10
 // const passHash = hashSync(pass, HASH_SALT)
 // console.log(passHash);
 
 module.exports.createUser = async (req, res, next) => {
     const { body } = req;
     try {
-        body.passwHash = hashSync(body.passwHash, HASH_SALT);
+        //body.passwHash = hashSync(body.passwHash, HASH_SALT);
         //console.log(body.passwHash)
         const createdUser = await User.create(body);
         if (!createdUser) {
@@ -68,8 +68,8 @@ module.exports.updateUserById = async (req, res, next) => {
 
 
     try {
-        body.passwHash = hashSync(body.passwHash, HASH_SALT);
-        
+        //body.passwHash = hashSync(body.passwHash, HASH_SALT);
+
         const [updatedUsersCount, [updatedUser]] = await User.update(body, {
             where: { id },
             raw: true,
