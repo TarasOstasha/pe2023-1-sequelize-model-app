@@ -1,5 +1,6 @@
 // const { hashSync } = require('bcrypt');
 const _ = require('lodash');
+const createError = require('http-errors')
 const { User } = require('../models');
 
 
@@ -16,7 +17,9 @@ module.exports.createUser = async (req, res, next) => {
         const createdUser = await User.create(body);
         if (!createdUser) {
             // create error from error handler
-            return res.status(400).send('Something went wrong');
+            //return res.status(400).send('Something went wrong');
+            return next(createError(400, 'Something went wrong'));
+
         }
         const preparedUser = _.omit(createdUser.get(), ['passwHash', 'createdAt', 'updatedAt']);
         //const preparedUser = {...createdUser.get()};
@@ -50,9 +53,8 @@ module.exports.getUserById = async (req, res, next) => {
         const foundUser = await User.findByPk(id, { raw: true, exclude: ['createdAt', 'updatedAt', 'passwHash'] });
 
         if (!foundUser) {
-            return res
-                .status(404)
-                .send([{ status: 404, message: 'User not found ):' }]);
+            //return res.status(404).send([{ status: 404, message: 'User not found ):' }]);
+            return next(createError(404, 'User not found'));
         }
 
         res.status(200).send({ data: foundUser });
@@ -77,7 +79,8 @@ module.exports.updateUserById = async (req, res, next) => {
         });
 
         if (!updatedUsersCount) {
-            return res.status(404).send([{ status: 404, title: 'User Not Found' }]);
+            //return res.status(404).send([{ status: 404, title: 'User Not Found' }]);
+            return next(createError(404, 'User not found'));
         }
 
         const preparedUser = _.omit(updatedUser, [
@@ -124,7 +127,8 @@ module.exports.deleteUserById = async (req, res, next) => {
     try {
         const deletedUserCount = await User.destroy({ where: { id } });
         if (deletedUserCount === 0) {
-            return res.status(404).send([{ status: 404, title: 'User Not Found' }]);
+            //return res.status(404).send([{ status: 404, title: 'User Not Found' }]);
+            return next(createError(404, 'User Not Found'));
         }
         res.status(204).end();
     } catch (error) {
