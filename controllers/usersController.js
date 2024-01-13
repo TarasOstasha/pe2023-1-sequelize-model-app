@@ -14,7 +14,8 @@ module.exports.createUser = async (req, res, next) => {
         body.passwHash = hashSync(body.passwHash, HASH_SALT);
         //console.log(body.passwHash)
         const createdUser = await User.create(body);
-        if(!createdUser) {
+        if (!createdUser) {
+            // create error from error handler
             return res.status(400).send('Something went wrong');
         }
         const preparedUser = _.omit(createdUser.get(), ['passwHash', 'createdAt', 'updatedAt']);
@@ -27,7 +28,80 @@ module.exports.createUser = async (req, res, next) => {
         next(err);
     }
 }
-module.exports.getUsers = async (req, res, next) => {}
-module.exports.getUserById = async (req, res, next) => {}
-module.exports.updateUserById = async (req, res, next) => {}
-module.exports.deleteUserById = async (req, res, next) => {}
+// --------------------------------------------------------------------------------------------------------
+module.exports.getUsers = async (req, res, next) => {
+    const { limit, offset } = req.pagination;
+    try {
+        const foundUsers = await User.findAll({
+            raw: true, attributes: { exclude: ['createdAt', 'updatedAt', 'passwHash'] },
+            limit,
+            offset,
+            order: ['id']
+        }); // excluded data from response
+        res.status(200).send({ data: foundUsers });
+    } catch (error) {
+        next(error)
+    }
+}
+// --------------------------------------------------------------------------------------------------------
+module.exports.getUserById = async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const foundUser = await User.findByPk(id, { raw: true, exclude: ['createdAt', 'updatedAt', 'passwHash'] });
+
+        if (!foundUser) {
+            return res
+                .status(404)
+                .send([{ status: 404, message: 'User not found ):' }]);
+        }
+
+        res.status(200).send({ data: foundUser });
+    } catch (err) {
+        next(err);
+    }
+
+}
+// --------------------------------------------------------------------------------------
+module.exports.updateUserById = async (req, res, next) => {
+
+    const { body, params: { id } } = req;
+
+
+    try {
+        body.passwHash = hashSync(body.passwHash, HASH_SALT);
+        
+        const [updatedUsersCount, [updatedUser]] = await User.update(body, {
+            where: { id },
+            raw: true,
+            returning: true,
+        });
+
+        if (!updatedUsersCount) {
+            return res.status(404).send([{ status: 404, title: 'User Not Found' }]);
+        }
+
+        const preparedUser = _.omit(updatedUser, [
+            'passwHash',
+            'createdAt',
+            'updatedAt',
+        ]);
+
+        res.status(200).send({ data: preparedUser });
+    } catch (err) {
+        next(err);
+    }
+};
+
+/// -------------------------------------------------------------------------------------
+module.exports.deleteUserById = async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const deletedUserCount = await User.destroy({ where: { id } });
+        if (deletedUserCount === 0) {
+            return res.status(404).send([{ status: 404, title: 'User Not Found' }]);
+        }
+        res.status(204).end();
+    } catch (error) {
+        next(error);
+    }
+}

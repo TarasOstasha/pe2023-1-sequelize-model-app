@@ -4,8 +4,67 @@ Content-Type: application/json
 {
     "firstName": "Janert",
     "lastName": "Dosm",
-    "email": "m6@m.com",
+    "email": "m12@m.com",
     "passwHash": "987",
     "birthday": "1990-11-10",
     "gender": "female"
+}
+
+###
+GET http://localhost:5000/api/users
+
+###
+GET http://localhost:5000/api/users?page=1&results=2
+
+### 200
+
+GET http://localhost:5000/api/users/10
+
+
+### 404
+
+GET http://localhost:5000/api/users/1
+
+### 200
+
+DELETE http://localhost:5000/api/users/11
+
+### 404
+
+DELETE http://localhost:5000/api/users/1
+
+### 200
+
+PATCH  http://localhost:5000/api/users/12
+Content-Type: application/json
+
+{
+    "lastName": "Newdou"
+}
+
+### 200
+
+PATCH  http://localhost:5000/api/users/10
+Content-Type: application/json
+
+{
+    "passwHash": "newpass"
+}
+
+### 404
+
+PATCH  http://localhost:5000/api/users/111
+Content-Type: application/json
+
+{
+    "lastName": "Newdou"
+}
+
+### 500 (422)
+
+PATCH  http://localhost:5000/api/users/31
+Content-Type: application/json
+
+{
+    "firstName": "545153153"
 }
