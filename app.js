@@ -9,7 +9,7 @@ app.use('/api', router);
 
 
 
-app.use(errorHandlers.errorHandler);
+app.use(errorHandlers.dbErrorHandler, errorHandlers.errorHandler);
 
 module.exports = app;
 
