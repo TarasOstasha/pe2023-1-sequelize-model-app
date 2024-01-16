@@ -3,22 +3,32 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class task extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+  class Task extends Model {
     static associate(models) {
       // define association here
+      Task.belongsTo(models.User, {
+        foreignKey: 'userId',
+      })
     }
   }
-  task.init({
-    body: DataTypes.STRING,
-    deadline: DataTypes.DATEONLY
+  Task.init({
+    body: { 
+      typee: DataTypes.STRING, 
+      allowNull: false, 
+      validate: {
+        not: /^$/
+      }
+    },
+    deadline: { 
+      type: DataTypes.DATEONLY ,
+      validate: {
+        isAfter: new Date(new Date().setDate(new Date().getDate() - 15)).toISOString()
+      }
+    }
   }, {
     sequelize,
-    modelName: 'task',
+    underscored: true,
+    modelName: 'Task',
   });
   return task;
 };
