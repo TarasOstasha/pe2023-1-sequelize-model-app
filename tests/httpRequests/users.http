@@ -98,3 +98,15 @@ Content-Type: application/json
     "birthday": "1990-11-10",
     "gender": "female"
 }
+
+### 200
+
+GET  http://localhost:5000/api/users/18/tasks
+
+### 200 - []
+
+GET  http://localhost:5000/api/users/120/tasks
+
+### 404
+
+GET  http://localhost:5000/api/users/111/tasks

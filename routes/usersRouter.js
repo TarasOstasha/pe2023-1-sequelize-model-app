@@ -13,6 +13,9 @@ usersRouter.route('/:id')
     .get(usresController.getUserById)
     .patch(usresController.updateUserById)
     .put(usresController.updateOrCreateUser, usresController.createUser)
-    .delete(usresController.deleteUserById)
+    .delete(usresController.deleteUserById);
+
+usersRouter.get('/:id/tasks', usresController.getUserTasks);
+
 
 module.exports = usersRouter;
